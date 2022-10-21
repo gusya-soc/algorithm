@@ -22,8 +22,8 @@ int cnt(NODE* node);
 int sum(NODE* node);
 int height(NODE* node);
 int is_same(NODE* a,NODE* b);
-// struct findResult* find(NODE* root,int x);
-NODE* find(NODE* root,int x);
+struct findResult* find(NODE* root,int x);
+// NODE* find(NODE* root,int x);
 NODE* insert(NODE* root,int x);
 int insert_1(NODE* root,int x);
 void btsDelete(NODE* root,int x);
@@ -40,13 +40,13 @@ int main()
     int result = is_same(root,x_1);
     printf("%d\n",result);
 
-    // struct findResult* re = find(root,6);
-    NODE* re = find(root,6);
+    struct findResult* re = find(root,6);
+    // NODE* re = find(root,6);
     if(re)
     {
-        // printf("node.data:%d\n",re->node->data);
-        // printf("node.data:%d\n",re->parent->data);
-        printf("node.data:%d\n",re->data);
+        printf("node.data:%d\n",re->node->data);
+        printf("node.data:%d\n",re->parent->data);
+        // printf("node.data:%d\n",re->data);
     }else{
         printf("Null\n");
     }
@@ -131,48 +131,44 @@ int is_same(NODE* a,NODE* b)
 
 }
 
-NODE* find(NODE* root,int x)
-{
-    while(root&&root->data!=x)
-    {
-        // if(root->data==x)
-        // {
-        //     return root;
-        // }
-        if(x<root->data)
-        {
-            root = root->left;
-        }else{
-            root = root->right;
-        }
-    }
-    return root;
-}
-
-// ISSUE: this function will cause unintended root changes
-// struct findResult* find(NODE* root,int x)
+// NODE* find(NODE* root,int x)
 // {
-//     struct findResult* re;
-//     NODE* parent;
-//     NODE* node = root;
-//     while(node && node->data!=x)
+//     while(root&&root->data!=x)
 //     {
 //         // if(root->data==x)
 //         // {
 //         //     return root;
 //         // }
-//         parent = node;
-//         if(x<node->data)
+//         if(x<root->data)
 //         {
-//             node = node->left;
+//             root = root->left;
 //         }else{
-//             node = node->right;
+//             root = root->right;
 //         }
 //     }
-//     re->node = node;
-//     re->parent = parent;
-//     return re;
+//     return root;
 // }
+
+// ISSUE: this function will cause unintended root changes
+struct findResult* find(NODE* root,int x)
+{
+    struct findResult* re = (struct findResult*)malloc(sizeof(struct findResult));
+    NODE* parent;
+    NODE* node = root;
+    while(node && node->data!=x)
+    {
+        parent = node;
+        if(x<node->data)
+        {
+            node = node->left;
+        }else{
+            node = node->right;
+        }
+    }
+    re->node = node;
+    re->parent = parent;
+    return re;
+}
 
 
 void inTraverse(NODE* node)
@@ -188,28 +184,35 @@ void inTraverse(NODE* node)
 
 int insert_1(NODE* node,int x)
 {
-    NODE* parent;
-    while(node && node->data!=x)
+    // NODE* parent;
+    // while(node && node->data!=x)
+    // {
+    //     parent = node;
+    //        if(x<node->data)
+    //     {
+    //         node = node->left;
+    //     }else{
+    //         node = node->right;
+    //     }
+    // }
+    // if(node)
+    // {
+    //     // target node existed
+    //     return 0;
+    // }
+
+    struct findResult* p = find(node,x);
+    if(p->node)
     {
-        parent = node;
-           if(x<node->data)
-        {
-            node = node->left;
-        }else{
-            node = node->right;
-        }
-    }
-    if(node)
-    {
-        // target node existed
+    //  the target node existed
         return 0;
     }
     node = create(x);
-    if(x<parent->data)
+    if(x<p->parent->data)
     {
-        parent->left = node;
+        p->parent->left = node;
     }else{
-        parent->right = node;
+        p->parent->right = node;
     }
     return 1;
 }
