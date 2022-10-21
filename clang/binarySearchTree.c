@@ -24,11 +24,11 @@ int height(NODE* node);
 int is_same(NODE* a,NODE* b);
 struct findResult* find(NODE* root,int x);
 // NODE* find(NODE* root,int x);
-NODE* insert(NODE* root,int x);
 int insert_1(NODE* root,int x);
-void btsDelete(NODE* root,int x);
+void btsDelete(NODE* node,int x);
 void inTraverse(NODE* root);
-
+void levelTraverse(NODE* node);
+NODE* btsDeleteRecursion(NODE* node,int x);
 
 int main()
 {
@@ -53,7 +53,7 @@ int main()
     // printf("%d",root->data);
     inTraverse(root);
     
-    printf("Null\n");
+    printf("\n");
     NODE* root2 = create(6);
     insert_1(root2,4);
     insert_1(root2,8);
@@ -63,6 +63,14 @@ int main()
     insert_1(root2,7);
     insert_1(root2,9);
     inTraverse(root2);
+    printf("\n");
+    //not work
+    // btsDelete(root2,6);
+    // inTraverse(root2);
+
+    btsDeleteRecursion(root2,6);
+    inTraverse(root2);
+    printf("\n%d ",root2->data);
     return 0;
 }
 
@@ -181,6 +189,15 @@ void inTraverse(NODE* node)
     printf("%d ",node->data);
     inTraverse(node->right);
 }
+void levelTraverse(NODE* node)
+{
+    if(!node)
+    {
+        return;
+    }
+    // TODO：we dont have QUEUE!!!
+
+}
 
 int insert_1(NODE* node,int x)
 {
@@ -218,7 +235,74 @@ int insert_1(NODE* node,int x)
 }
 
 
-void btsDelete(NODE* root,int x)
+void btsDelete(NODE* node,int x)
 {
-    return;
+    if(!node)
+    {
+        return;
+    }
+    struct findResult* p = find(node,x);
+    if(!p->node)
+    {
+        //the node not found
+        return;
+    }
+    if(p->node->left&&p->node->right)
+    {
+        NODE* tmp = p->node->right;
+        while(tmp->left)
+        {
+            tmp = tmp->left;
+        }
+        p->node->data = tmp->data;
+        btsDelete(p->node->right,tmp->data);
+
+    // TODO:we need more elegant!!
+    }else if(p->node->left) //only have one node
+    {
+        p->node->data = p->node->left->data;
+        free(p->node->left);
+        p->node->left = NULL;
+        
+    }else if(p->node->right)
+    {
+        p->node->data = p->node->right->data;
+        free(p->node->right);
+        p->node->right = NULL;
+    }else{
+        p->node = NULL;
+    }
+}
+
+NODE* btsDeleteRecursion(NODE* node,int x)
+{
+    if(!node)
+    {
+        return NULL;
+    }
+    if(node->data==x)
+    {
+        if(!node->left)
+        {
+            return node->right;
+        }
+        if(!node->right)
+        {
+            return node->left;
+        }
+
+        NODE* tmp = node->right;
+        while(tmp->left)
+        {
+            tmp=tmp->left;
+        }
+        node->data = tmp->data;
+        node->right = btsDeleteRecursion(node->right,tmp->data);
+    }else if(x < node->data)
+    {
+        node->left=btsDeleteRecursion(node->left,x);
+    }else{
+        node->right=btsDeleteRecursion(node->right,x);
+    }
+    return node;
 }
