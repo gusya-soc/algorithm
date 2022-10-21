@@ -24,7 +24,8 @@ int height(NODE* node);
 int is_same(NODE* a,NODE* b);
 // struct findResult* find(NODE* root,int x);
 NODE* find(NODE* root,int x);
-int insert(NODE* root,int x);
+NODE* insert(NODE* root,int x);
+int insert_1(NODE* root,int x);
 void btsDelete(NODE* root,int x);
 void inTraverse(NODE* root);
 
@@ -51,6 +52,17 @@ int main()
     }
     // printf("%d",root->data);
     inTraverse(root);
+    
+    printf("Null\n");
+    NODE* root2 = create(6);
+    insert_1(root2,4);
+    insert_1(root2,8);
+    insert_1(root2,2);
+    insert_1(root2,1);
+    insert_1(root2,3);
+    insert_1(root2,7);
+    insert_1(root2,9);
+    inTraverse(root2);
     return 0;
 }
 
@@ -163,18 +175,47 @@ NODE* find(NODE* root,int x)
 // }
 
 
-void inTraverse(NODE* root)
+void inTraverse(NODE* node)
 {
-    if(!root)
+    if(!node)
     {
         return;
     }
-    inTraverse(root->left);
-    printf("%d ",root->data);
-    inTraverse(root->right);
+    inTraverse(node->left);
+    printf("%d ",node->data);
+    inTraverse(node->right);
 }
 
-int insert(NODE* root,int x)
+int insert_1(NODE* node,int x)
+{
+    NODE* parent;
+    while(node && node->data!=x)
+    {
+        parent = node;
+           if(x<node->data)
+        {
+            node = node->left;
+        }else{
+            node = node->right;
+        }
+    }
+    if(node)
+    {
+        // target node existed
+        return 0;
+    }
+    node = create(x);
+    if(x<parent->data)
+    {
+        parent->left = node;
+    }else{
+        parent->right = node;
+    }
+    return 1;
+}
+
+
+void btsDelete(NODE* root,int x)
 {
     return;
 }
