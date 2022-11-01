@@ -1,5 +1,6 @@
-#include<stdio.h>
-#include<stdlib.h>
+// #include<stdio.h>
+// #include<stdlib.h>
+#include<bits/stdc++.h>
 
 #define false 0;
 #define true 1;
@@ -69,8 +70,10 @@ int main()
     // inTraverse(root2);
 
     btsDeleteRecursion(root2,6);
+    btsDeleteRecursion(root2,100);
     inTraverse(root2);
     printf("\n%d ",root2->data);
+    levelTraverse(root2);
     return 0;
 }
 
@@ -189,12 +192,34 @@ void inTraverse(NODE* node)
     printf("%d ",node->data);
     inTraverse(node->right);
 }
+
 void levelTraverse(NODE* node)
 {
-    if(!node)
+    printf("\n=======\n");
+    std::queue<NODE*>q;
+    NODE* flag = create(65535);
+    q.push(node);
+    // q.push(flag); // level flag
+    while(!(q.empty()))
     {
-        return;
+        NODE* tmp = q.front();
+        q.pop();
+        if(!tmp)
+        {
+            continue;
+        // if(tmp->data==65535)
+        // {
+        //     printf("/");
+        //     q.push(flag);
+        }else
+        {
+            q.push(tmp->left);
+            q.push(tmp->right);
+            printf("%d ",tmp->data);
+        }
+
     }
+
     // TODO：we dont have QUEUE!!!
 
 }
