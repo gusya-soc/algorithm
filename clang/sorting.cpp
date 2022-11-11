@@ -1,7 +1,7 @@
 #include<bits/stdc++.h>
 
 #define R 100//random range
-#define arraySize 100 // array size
+#define arraySize 1000// array size
 
 
 
@@ -12,11 +12,11 @@ int* select();
 int* insert_shift();
 int* insert_swap();
 void swap(int* a,int* b);
-void show();
+void show(int a[]);
 void checker();
 void merge_merge(int a[],int s,int m,int e);
 void heap_up(int a[],int idx);
-void heap_down(int a[],int idx);
+void heap_down(int a[],int s,int idx);
 
 
 void swap(int*a ,int* b)
@@ -200,11 +200,13 @@ void heap(int a[],int size)
 {
     for(int i = 1;i<size;i++)
     {
+        // 建堆：从前往后遍历每个节点，以类似插入排序的方式插入正确位置
         heap_up(a,i);
     }
     for(int i=size-1;i>=1;i--)
     {
-        heap_down(a,i);
+        swap(&a[0],&a[i]);
+        heap_down(a,0,i-1);
     }
 }
 void heap_up(int a[],int idx)
@@ -217,26 +219,71 @@ void heap_up(int a[],int idx)
     }
     a[i] = tmp;
 }
-void heap_down(int a[],int idx)
+void heap_down(int a[],int s,int idx)
 {
-    swap(&a[0],&a[idx]);
+
     // int tmp = a[0];
-    int node = 0;
-    int child = 1;
-    while(child<idx)
+    int node = s;
+    int child = s*2 + 1;
+    while(child<=idx)
     {
-        if(child+1<idx && a[child+1]>a[child])
+        if(child+1<=idx && a[child+1]>a[child])
         {
-            child = child+1;
+            child++;
         }
-        if(a[node]<a[child])
+        if(a[node]>a[child])
+        {
+            return;
+        }
+        else
         {
             swap(&a[node],&a[child]);
+            node = child;
+            child = child*2 + 1;
         }
-        node = child;
-        child = 2*child+1;
+
     }
 }
+void max_heapify(int a[],int s,int e)
+{
+    int current = s;
+    int child = current*2 + 1;
+    while(child<=e)
+    {
+        if(child+1<=e && a[child]<a[child+1])
+        {
+            child++;
+        }
+        if(a[current]>a[child])
+        {
+            return;
+        }
+        else{
+            swap(&a[current],&a[child]);
+            current = child;
+            child = current*2 + 1;
+        }
+    }
+}
+
+// from wikipedia
+void heap_2(int a[],int size)
+{
+    int i;
+    for(i = size/2-1;i>=0;i--)
+    {
+        // 建堆：从最后一个有子节点的节点往前遍历，依次比较其与子节点的关系。
+        heap_down(a,i,size-1);
+        // show(a);
+    }
+    for(i=size-1;i>0;i--)
+    {
+        swap(&a[0],&a[i]);
+        heap_down(a,0,i-1);
+    }
+}
+
+
 
 int* creatRandomArray(int n)
 {
@@ -293,10 +340,32 @@ int main()
     //     heap_up(t,i);
     // }
     // show(t);
-    int* f = creatRandomArray(arraySize);
-    show(f);
-    heap(f,arraySize);
-    show(f);
-    checker(f,arraySize);
+
+    //运行时间测试
+    clock_t startTime,endTime;
+    startTime = clock();
+    for(int i=0;i<10;i++){
+            
+        int* f = creatRandomArray(arraySize);
+        // show(f);
+        heap_2(f,arraySize);
+        // show(f);
+        checker(f,arraySize);
+    }
+     endTime = clock();//计时结束
+    std::cout << "The run time is: " <<(double)(endTime - startTime) / CLOCKS_PER_SEC << "s" << std::endl;
+
+    startTime = clock();
+    for(int i=0;i<10;i++){
+    int* h = creatRandomArray(arraySize);
+    // show(f);
+    heap(h,arraySize);
+    // show(f);
+    checker(h,arraySize);
+    }
+     endTime = clock();//计时结束
+    std::cout << "The run time is: " <<(double)(endTime - startTime) / CLOCKS_PER_SEC << "s" << std::endl;
+
+
     return 0;
 }
