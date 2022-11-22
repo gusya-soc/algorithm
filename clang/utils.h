@@ -1,0 +1,1 @@
+int* creatRandomArray(int n,int R);
